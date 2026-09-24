@@ -53,6 +53,13 @@ public class NotificationService {
         if (selectionMode == SelectionMode.HOME_OR_FOLLOWED) {
             return livesHere || subscriber.getFollowedWards().contains(issuingWard);
         }
+        if (selectionMode == SelectionMode.FOLLOWED_ONLY) {
+            return livesHere || subscriber.getFollowedWards().contains(issuingWard); //FIXME
+        }
+        if (selectionMode == SelectionMode.NON_RESIDENT_FOLLOWER) {
+            return livesHere || subscriber.getFollowedWards().contains(issuingWard); //FIXME
+        }
+
 
         // TODO: Support FOLLOWED_ONLY and NON_RESIDENT_FOLLOWER.
         // Section 2 of ASSIGNMENT.md asks you to move each rule into its own
