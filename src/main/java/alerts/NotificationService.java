@@ -47,17 +47,17 @@ public class NotificationService {
     private boolean shouldNotify(Subscriber subscriber, String issuingWard) {
         boolean livesHere = subscriber.getHomeWard().equals(issuingWard);
 
-        if (selectionMode == SelectionMode.HOME_ONLY) {
+        if (selectionMode == SelectionMode.HOME_ONLY) { // Select subscribers whose home ward matches the issuing ward.
             return livesHere;
         }
-        if (selectionMode == SelectionMode.HOME_OR_FOLLOWED) {
+        if (selectionMode == SelectionMode.HOME_OR_FOLLOWED) { // Select subscribers whose home ward matches OR who follow the issuing ward.
             return livesHere || subscriber.getFollowedWards().contains(issuingWard);
         }
-        if (selectionMode == SelectionMode.FOLLOWED_ONLY) {
-            return livesHere || subscriber.getFollowedWards().contains(issuingWard); //FIXME
+        if (selectionMode == SelectionMode.FOLLOWED_ONLY) { // Select subscribers who follow the issuing ward. Home ward does not matter.
+            return subscriber.getFollowedWards().contains(issuingWard);
         }
-        if (selectionMode == SelectionMode.NON_RESIDENT_FOLLOWER) {
-            return livesHere || subscriber.getFollowedWards().contains(issuingWard); //FIXME
+        if (selectionMode == SelectionMode.NON_RESIDENT_FOLLOWER) { // Select subscribers who follow the issuing ward AND whose home ward is different.
+            return !livesHere && subscriber.getFollowedWards().contains(issuingWard);
         }
 
 
