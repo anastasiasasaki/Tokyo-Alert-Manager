@@ -93,28 +93,38 @@ public class NotificationService {
 //        throw new UnsupportedOperationException("Simulated delivery is not implemented yet.");
 //    }
 
-        public List<DeliveryRecord> sendNotice(List<Subscriber> subscribers,
-                                               String issuingWard, String message){
+    private alerts.delivery.DeliveryMethod getMethodForChannel(DeliveryChannel channel) {
+        switch(channel) {
+            case APP:
+                return new alerts.delivery.AppDelivery();
+            case EMAIL:
+                return new alerts.delivery.EmailDelivery();
 
-            Objects.requireNonNull(subscribers, "subscribers");
-            Objects.requireNonNull(issuingWard, "issuingWard");
-            Objects.requireNonNull(message, "message");
-            alerts.delivery.DeliveryMethod method;
-            if(this.deliveryChannel == DeliveryChannel.APP)
-            {
-                method = new alerts.delivery.AppDelivery();
-            }else {
-            method = new alerts.delivery.EmailDelivery();
-            }
-            Set<String> recipientIds = selectRecipients(subscribers, issuingWard);
-            List<DeliveryRecord> records = new java.util.ArrayList<>();
-            for (String id : recipientIds) {
-                DeliveryRecord record = method.deliver(id, issuingWard, message);
-                records.add(record);
-            }
-            return records;
+                //if any additional way of delivery like phone call, add it here
+            default:
+                throw new IllegalArgumentException("Unknown channel: " + channel);
+        }
+    }
+
+    public List<DeliveryRecord> sendNotice(List<Subscriber> subscribers,
+                                           String issuingWard, String message) {
+
+        Objects.requireNonNull(subscribers, "subscribers");
+        Objects.requireNonNull(issuingWard, "issuingWard");
+        Objects.requireNonNull(message, "message");
+
+        alerts.delivery.DeliveryMethod method = getMethodForChannel(this.deliveryChannel);
+
+        Set<String> recipientIds = selectRecipients(subscribers, issuingWard);
+        List<DeliveryRecord> records = new java.util.ArrayList<>();
+
+        for (String id : recipientIds) {
+            DeliveryRecord record = method.deliver(id, issuingWard, message);
+            records.add(record);
         }
 
+        return records;
+    }
 
     /** Returns the correct policy **/
     private RecipientPolicy getPolicyForMode (SelectionMode mode) {

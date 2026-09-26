@@ -1,7 +1,7 @@
 package alerts.delivery;
 
+import alerts.DeliveryChannel;
 import alerts.model.DeliveryRecord;
-import alerts.DeliveryChannel; // ← 正しいEnumをインポート
 
 public class AppDelivery implements DeliveryMethod {
     @Override
