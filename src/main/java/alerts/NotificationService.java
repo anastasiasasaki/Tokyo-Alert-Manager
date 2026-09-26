@@ -1,7 +1,7 @@
 package alerts;
 
-import alerts.model.DeliveryRecord;
-import alerts.model.Subscriber;
+import alerts.model.*;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -12,10 +12,16 @@ public class NotificationService {
     private SelectionMode selectionMode = SelectionMode.HOME_ONLY;
     private DeliveryChannel deliveryChannel = DeliveryChannel.EMAIL;
 
-    public NotificationService() { }
+    private RecipientPolicy policy; // added
+
+
+    public NotificationService() {
+        this.policy = getPolicyForMode(this.selectionMode);  // added to assign policy
+    }
 
     public void setSelectionMode(SelectionMode mode) {
         selectionMode = Objects.requireNonNull(mode, "mode");
+        this.policy = getPolicyForMode(mode); // added to assign policy
     }
 
     public SelectionMode getSelectionMode() {
@@ -35,24 +41,40 @@ public class NotificationService {
         Objects.requireNonNull(subscribers, "subscribers");
         Objects.requireNonNull(issuingWard, "issuingWard");
 
+
         Set<String> recipientIds = new LinkedHashSet<>();
         for (Subscriber subscriber : subscribers) {
-            if (shouldNotify(subscriber, issuingWard)) {
+//            if (shouldNotify(subscriber, issuingWard)) {
+//                recipientIds.add(subscriber.getId());
+//            }
+
+            // added interface compatibility
+            if (policy.shouldNotify(subscriber, issuingWard)){
                 recipientIds.add(subscriber.getId());
             }
+
         }
         return recipientIds;
     }
 
+    // not using this anymore
     private boolean shouldNotify(Subscriber subscriber, String issuingWard) {
         boolean livesHere = subscriber.getHomeWard().equals(issuingWard);
 
-        if (selectionMode == SelectionMode.HOME_ONLY) {
+
+        if (selectionMode == SelectionMode.HOME_ONLY) { // Select subscribers whose home ward matches the issuing ward.
             return livesHere;
         }
-        if (selectionMode == SelectionMode.HOME_OR_FOLLOWED) {
+        if (selectionMode == SelectionMode.HOME_OR_FOLLOWED) { // Select subscribers whose home ward matches OR who follow the issuing ward.
             return livesHere || subscriber.getFollowedWards().contains(issuingWard);
         }
+        if (selectionMode == SelectionMode.FOLLOWED_ONLY) { // Select subscribers who follow the issuing ward. Home ward does not matter.
+            return subscriber.getFollowedWards().contains(issuingWard);
+        }
+        if (selectionMode == SelectionMode.NON_RESIDENT_FOLLOWER) { // Select subscribers who follow the issuing ward AND whose home ward is different.
+            return !livesHere && subscriber.getFollowedWards().contains(issuingWard);
+        }
+
 
         // TODO: Support FOLLOWED_ONLY and NON_RESIDENT_FOLLOWER.
         // Section 2 of ASSIGNMENT.md asks you to move each rule into its own
@@ -69,5 +91,21 @@ public class NotificationService {
 
         // TODO: Select recipients and use the chosen DeliveryMethod.
         throw new UnsupportedOperationException("Simulated delivery is not implemented yet.");
+    }
+
+    /** Returns the correct policy **/
+    private RecipientPolicy getPolicyForMode (SelectionMode mode) {
+        switch (mode) {
+            case HOME_ONLY:
+                return new HomeOnlyPolicy();
+            case HOME_OR_FOLLOWED:
+                return new HomeOrFollowedPolicy();
+            case FOLLOWED_ONLY:
+                return new FollowedOnlyPolicy();
+            case NON_RESIDENT_FOLLOWER:
+                return new NonResidentFollowerPolicy();
+            default:
+                throw new IllegalArgumentException("Unknown selection mode: " + mode);
+        }
     }
 }
