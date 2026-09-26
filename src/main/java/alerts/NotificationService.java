@@ -83,14 +83,47 @@ public class NotificationService {
     }
 
     /** Returns the simulated deliveries for this call only. */
+//    public List<DeliveryRecord> sendNotice(List<Subscriber> subscribers,
+//                                         String issuingWard, String message) {
+//        Objects.requireNonNull(subscribers, "subscribers");
+//        Objects.requireNonNull(issuingWard, "issuingWard");
+//        Objects.requireNonNull(message, "message");
+//
+//        // TODO: Select recipients and use the chosen DeliveryMethod.
+//        throw new UnsupportedOperationException("Simulated delivery is not implemented yet.");
+//    }
+
+    private alerts.delivery.DeliveryMethod getMethodForChannel(DeliveryChannel channel) {
+        switch(channel) {
+            case APP:
+                return new alerts.delivery.AppDelivery();
+            case EMAIL:
+                return new alerts.delivery.EmailDelivery();
+
+                //if any additional way of delivery like phone call, add it here
+            default:
+                throw new IllegalArgumentException("Unknown channel: " + channel);
+        }
+    }
+
     public List<DeliveryRecord> sendNotice(List<Subscriber> subscribers,
-                                         String issuingWard, String message) {
+                                           String issuingWard, String message) {
+
         Objects.requireNonNull(subscribers, "subscribers");
         Objects.requireNonNull(issuingWard, "issuingWard");
         Objects.requireNonNull(message, "message");
 
-        // TODO: Select recipients and use the chosen DeliveryMethod.
-        throw new UnsupportedOperationException("Simulated delivery is not implemented yet.");
+        alerts.delivery.DeliveryMethod method = getMethodForChannel(this.deliveryChannel);
+
+        Set<String> recipientIds = selectRecipients(subscribers, issuingWard);
+        List<DeliveryRecord> records = new java.util.ArrayList<>();
+
+        for (String id : recipientIds) {
+            DeliveryRecord record = method.deliver(id, issuingWard, message);
+            records.add(record);
+        }
+
+        return records;
     }
 
     /** Returns the correct policy **/
