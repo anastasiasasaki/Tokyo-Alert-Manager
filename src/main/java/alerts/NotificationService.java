@@ -83,15 +83,38 @@ public class NotificationService {
     }
 
     /** Returns the simulated deliveries for this call only. */
-    public List<DeliveryRecord> sendNotice(List<Subscriber> subscribers,
-                                         String issuingWard, String message) {
-        Objects.requireNonNull(subscribers, "subscribers");
-        Objects.requireNonNull(issuingWard, "issuingWard");
-        Objects.requireNonNull(message, "message");
+//    public List<DeliveryRecord> sendNotice(List<Subscriber> subscribers,
+//                                         String issuingWard, String message) {
+//        Objects.requireNonNull(subscribers, "subscribers");
+//        Objects.requireNonNull(issuingWard, "issuingWard");
+//        Objects.requireNonNull(message, "message");
+//
+//        // TODO: Select recipients and use the chosen DeliveryMethod.
+//        throw new UnsupportedOperationException("Simulated delivery is not implemented yet.");
+//    }
 
-        // TODO: Select recipients and use the chosen DeliveryMethod.
-        throw new UnsupportedOperationException("Simulated delivery is not implemented yet.");
-    }
+        public List<DeliveryRecord> sendNotice(List<Subscriber> subscribers,
+                                               String issuingWard, String message){
+
+            Objects.requireNonNull(subscribers, "subscribers");
+            Objects.requireNonNull(issuingWard, "issuingWard");
+            Objects.requireNonNull(message, "message");
+            alerts.delivery.DeliveryMethod method;
+            if(this.deliveryChannel == DeliveryChannel.APP)
+            {
+                method = new alerts.delivery.AppDelivery();
+            }else {
+            method = new alerts.delivery.EmailDelivery();
+            }
+            Set<String> recipientIds = selectRecipients(subscribers, issuingWard);
+            List<DeliveryRecord> records = new java.util.ArrayList<>();
+            for (String id : recipientIds) {
+                DeliveryRecord record = method.deliver(id, issuingWard, message);
+                records.add(record);
+            }
+            return records;
+        }
+
 
     /** Returns the correct policy **/
     private RecipientPolicy getPolicyForMode (SelectionMode mode) {
