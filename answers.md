@@ -1,8 +1,9 @@
 # Requirement Variants — Group Answers
 
-Group number:
+Group number: 1
 
-Group members (full names):
+Group members (full names): Sebastian Fournier, Anastasia, Rem, Satoi Murayama <- everyone put your full names
+
 
 Answer each question in no more than three sentences.
 
@@ -10,13 +11,30 @@ Answer each question in no more than three sentences.
 
 Which development model from class best describes your recipient-selection design? Identify the relevant class or method, and give one benefit and one cost compared with the starter's parameterized design.
 
-[Your answer]
+We used model 4, composition & delegation. We have an interface that declares the rules that all our policy classes follow. The interface is at src/main/java/alerts/model/RecipientPolicy.java. One benefit is that it's relatively easy to add more policies without changing the overall ruleset. One cost is that if we did change the ruleset in the interface, we might have to modify every single policy class as well.
 
 ## 2. Independent choices
 
 How does your code keep selection and delivery independent? Name the code you would add or modify for a third simulated delivery method, SMS, and identify selection code that would remain unchanged. Do not implement SMS.
 
 [Your answer]
+
+Satoi: The sendNotice method depends on the DeliveryMethod interface, not on concrete classes.
+The selectRecipients() method handles the message recipients, 
+while a specific DeliveryMethod class handles the delivery method.
+This separation ensures a high degree of flexibility.
+By separating these two responsibilities, we can safely change the delivery method 
+or add new ones in the future without having to modify the complex logic that 
+determines the message recipients.
+
+Code to Add or Modify for SMS:
+Add: A new SMS constant to the DeliveryChannel enum.
+Add: A new SmsDelivery class implementing the DeliveryMethod interface.
+Modify: The getMethodForChannel() method. Because it uses a switch statement to act as a simple factory, I only need to add case SMS: return new alerts.delivery.SmsDelivery(); to instantiate the new method.
+
+Selection Code That Remains Unchanged:
+The selectRecipients(subscribers, issuingWard) method itself.
+null checking method.
 
 ## 3. A test that distinguishes requirements
 
