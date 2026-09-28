@@ -2,7 +2,7 @@
 
 Group number: 1
 
-Group members (full names): Sebastian Fournier, Anastasia, Rem, Sato <- everyone put your full names
+Group members (full names): Sebastian Fournier, Anastasia, Rem, Satoi Murayama <- everyone put your full names
 
 
 Answer each question in no more than three sentences.
@@ -18,6 +18,23 @@ We used model 4, composition & delegation. We have an interface that declares th
 How does your code keep selection and delivery independent? Name the code you would add or modify for a third simulated delivery method, SMS, and identify selection code that would remain unchanged. Do not implement SMS.
 
 [Your answer]
+
+Satoi: The sendNotice method depends on the DeliveryMethod interface, not on concrete classes.
+The selectRecipients() method handles the message recipients, 
+while a specific DeliveryMethod class handles the delivery method.
+This separation ensures a high degree of flexibility.
+By separating these two responsibilities, we can safely change the delivery method 
+or add new ones in the future without having to modify the complex logic that 
+determines the message recipients.
+
+Code to Add or Modify for SMS:
+Add: A new SMS constant to the DeliveryChannel enum.
+Add: A new SmsDelivery class implementing the DeliveryMethod interface.
+Modify: The getMethodForChannel() method. Because it uses a switch statement to act as a simple factory, I only need to add case SMS: return new alerts.delivery.SmsDelivery(); to instantiate the new method.
+
+Selection Code That Remains Unchanged:
+The selectRecipients(subscribers, issuingWard) method itself.
+null checking method.
 
 ## 3. A test that distinguishes requirements
 
