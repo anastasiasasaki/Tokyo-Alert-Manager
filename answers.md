@@ -2,7 +2,7 @@
 
 Group number: 1
 
-Group members (full names): Sebastian Fournier, Anastasia, Rem, Satoi Murayama <- everyone put your full names
+Group members (full names): Sebastian Fournier, Anastasia, Rady Lai, Satoi Murayama <- everyone put your full names
 
 
 Answer each question in no more than three sentences.
@@ -44,3 +44,12 @@ Choose one of your tests that distinguishes FOLLOWED_ONLY from NON_RESIDENT_FOLL
 
 [Your answer]
 
+The first two tests in StudentTests concerning Shinjuku-ku are an example of this. followedOnly() receives a Set of
+users that follow Shinjuku-ku updates and compares them to a Set of S02, S04, the expected result, from the sample data.
+The next test, nonResidentFollower(), receives a Set of users that follow Shinjuku-ku updates but do not live in
+Shinjuku-ku and compares them to a Set of S02, the expected result, from the sample data.
+These two tests distinguish users who follow alerts for Shinjuku-ku and whether they live there or not. The mistake
+the tests would detect is if FollowedOnlyPolicy, NonResidentFollowerPolicy, and NotificationService were not set up
+properly to return the correct data based on the filters.
+For example, if NonResidentFollowerPolicy passed residents of Shinjuku-ku, the nonResidentFollower() test would catch
+the mistake due to both S02 and S04 (a resident of Shinjuku-ku) being in the Set.
