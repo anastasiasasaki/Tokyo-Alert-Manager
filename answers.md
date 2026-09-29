@@ -11,6 +11,8 @@ Answer each question in no more than three sentences.
 
 Which development model from class best describes your recipient-selection design? Identify the relevant class or method, and give one benefit and one cost compared with the starter's parameterized design.
 
+[Your answer]
+
 We used model 4, composition & delegation. We have an interface that declares the rules that all our policy classes follow. The interface is at src/main/java/alerts/model/RecipientPolicy.java. One benefit is that it's relatively easy to add more policies without changing the overall ruleset. One cost is that if we did change the ruleset in the interface, we might have to modify every single policy class as well.
 
 ## 2. Independent choices
@@ -41,3 +43,4 @@ null checking method.
 Choose one of your tests that distinguishes FOLLOWED_ONLY from NON_RESIDENT_FOLLOWER. Give its input and expected result, and explain the mistake it would detect.
 
 [Your answer]
+
