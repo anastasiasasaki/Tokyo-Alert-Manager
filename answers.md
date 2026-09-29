@@ -2,7 +2,7 @@
 
 Group number: 1
 
-Group members (full names): Sebastian Fournier, Anastasia, Rem, Satoi Murayama <- everyone put your full names
+Group members (full names): Sebastian Fournier, Anastasia Sasaki, Rem, Satoi Murayama <- everyone put your full names
 
 
 Answer each question in no more than three sentences.
